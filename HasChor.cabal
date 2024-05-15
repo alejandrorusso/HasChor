@@ -66,7 +66,8 @@ executable average-salary
         time,
         template-haskell,
         deepseq
-    ghc-options: -ddump-splices -ddump-rule-firings -O3
+    ghc-options: -O3 -fplugin=Choreography.Plugin
+--    ghc-options: -ddump-splices -ddump-rule-firings -O3 -fplugin=Choreography.Plugin
 
 executable bookseller-1-simple
     hs-source-dirs:   examples/bookseller-1-simple

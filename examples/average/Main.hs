@@ -2,7 +2,7 @@
 {-# LANGUAGE DataKinds      #-}
 {-# LANGUAGE LambdaCase     #-}
 {-# LANGUAGE TemplateHaskell #-}
-{-# OPTIONS_GHC -fplugin=Choreography.Plugin #-}
+-- {-# OPTIONS_GHC -fplugin=Choreography.Plugin #-}
 module Main (main) where
 
 import Choreography
