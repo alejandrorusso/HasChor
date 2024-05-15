@@ -158,8 +158,8 @@ mkCondRules endpoint endpoints = properRule : otherRules
     otherRules = map (\endpoint -> PragmaD $ RuleP (ruleName endpoint) Nothing (foralls <> [projected endpoint]) (lhs endpoint) (rhs endpoint) AllPhases) (filter ((/=) endpoint) endpoints)
       where
         rhs :: String -> Exp
---        rhs endpoint = UInfixE (AppE (VarE $ mkName "recv") (AppE (VarE $ mkName "toLocTm") (VarE $ mkName endpoint))) (VarE $ mkName ">>=") (LamE [VarP $ mkName "x"] (AppE (VarE $ mkName "c") (VarE $ mkName "x")))
-        rhs endpoint = UInfixE (AppE (VarE $ mkName "recv") (AppE (VarE $ mkName "toLocTm") (VarE $ mkName endpoint))) (VarE $ mkName ">>=") (LamE [VisAP $ VarP $ mkName "x"] (AppE (VarE $ mkName "c") (VarE $ mkName "x")))
+        rhs endpoint = UInfixE (AppE (VarE $ mkName "recv") (AppE (VarE $ mkName "toLocTm") (VarE $ mkName endpoint))) (VarE $ mkName ">>=") (LamE [VarP $ mkName "x"] (AppE (VarE $ mkName "c") (VarE $ mkName "x")))
+--        rhs endpoint = UInfixE (AppE (VarE $ mkName "recv") (AppE (VarE $ mkName "toLocTm") (VarE $ mkName endpoint))) (VarE $ mkName ">>=") (LamE [VisAP $ VarP $ mkName "x"] (AppE (VarE $ mkName "c") (VarE $ mkName "x")))
 
     projected :: String -> RuleBndr
     projected endpoint = TypedRuleVar (mkName endpoint) (ForallT [] [] (AppT (ConT (mkName "Proxy")) (LitT (StrTyLit endpoint))))

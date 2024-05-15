@@ -23,7 +23,7 @@ library
         Choreography.Network.Local
         Choreography.Rulegen
         Control.Monad.Freer
---        Plugin
+        Choreography.Plugin
     build-depends:
         base,
         bytestring,
@@ -33,8 +33,9 @@ library
         servant-server,
         unordered-containers,
         warp,
-        template-haskell
---        ghc
+        template-haskell,
+        ghc,
+        syb
 
 -- executable bank-2pc
 --     hs-source-dirs:   examples/bank-2pc
