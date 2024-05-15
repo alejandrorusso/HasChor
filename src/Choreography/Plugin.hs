@@ -9,6 +9,7 @@ plugin = defaultPlugin {
 
 install :: [CommandLineOption] -> [CoreToDo] -> CoreM [CoreToDo]
 install _ todo = do
+  -- we install our pass last, as we want it to run after optimisations
   return (todo ++ [CoreDoPluginPass "Partitioning verification pass" pass])
 
 -- | The actual pass, using syb to traverse a module and see if anything forbidden appears
