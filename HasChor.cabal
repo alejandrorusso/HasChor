@@ -24,6 +24,7 @@ library
         Choreography.Rulegen
         Control.Monad.Freer
         Choreography.Plugin
+        Choreography.FFIPlugin
     build-depends:
         base,
         bytestring,
@@ -35,7 +36,8 @@ library
         warp,
         template-haskell,
         ghc,
-        syb
+        syb,
+        mtl
 
 -- executable bank-2pc
 --     hs-source-dirs:   examples/bank-2pc

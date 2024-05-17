@@ -3,7 +3,8 @@
 {-# LANGUAGE LambdaCase     #-}
 {-# LANGUAGE TemplateHaskell #-}
 -- {-# OPTIONS_GHC -fplugin=Choreography.Plugin #-}
-module Main (main) where
+-- {-# OPTIONS_GHC -fplugin=Choreography.FFIPlugin #-}
+module Main where
 
 import Choreography
 import Data.Proxy
