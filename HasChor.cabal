@@ -11,6 +11,10 @@ category:           Concurrency
 tested-with:
    GHC == 9.2.8
 
+flag bluetooth
+  manual: True
+  default: False
+
 library
     hs-source-dirs:   src
     default-language: GHC2021
@@ -57,6 +61,20 @@ executable bookseller-0-network
         HasChor2,
         base,
         time
+
+executable pearlexample
+    hs-source-dirs:   examples/pearlexample
+    main-is:          Main.hs
+    default-language: GHC2021
+
+    if(flag(bluetooth))
+        C-sources: examples/pearlexample/bluetooth.c
+
+    build-depends:
+        HasChor2,
+        base,
+        template-haskell,
+    ghc-options: -O3 -fplugin=Choreography.Plugin
 
 executable average-salary
     hs-source-dirs:   examples/average
