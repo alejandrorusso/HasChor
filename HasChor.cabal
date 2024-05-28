@@ -86,7 +86,7 @@ executable average-salary
         time,
         template-haskell,
         deepseq
-    ghc-options: -O3 -fplugin=Choreography.Plugin
+    ghc-options: -O3 -fplugin=Choreography.Plugin -ddump-splices
 --    ghc-options: -ddump-splices -ddump-rule-firings -O3 -fplugin=Choreography.Plugin
 
 executable bookseller-1-simple
@@ -97,7 +97,7 @@ executable bookseller-1-simple
         HasChor2,
         base,
         time
-    ghc-options: -ddump-splices -ddump-rule-firings -O3
+    ghc-options: -ddump-splices -ddump-rule-firings -O3 -fplugin=Choreography.Plugin
 
 executable bookseller-2-higher-order
     hs-source-dirs:   examples/bookseller-2-higher-order
@@ -206,7 +206,7 @@ executable tricky
         HasChor2,
         base,
         containers
-    ghc-options: -ddump-splices -ddump-rule-firings -O3
+    ghc-options: -ddump-splices -ddump-rule-firings -O3 -fplugin=Choreography.Plugin
 
 executable quicksort
     hs-source-dirs:   examples/quicksort

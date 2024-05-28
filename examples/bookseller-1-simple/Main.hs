@@ -48,29 +48,29 @@ bookseller = do
         putStrLn "The book's price is out of the budget"
         return Nothing
 
--- `bookseller'` is a simplified version of `bookseller` that utilizes `~~>`
-bookseller' :: Choreo IO (Maybe Day @ "buyer")
-bookseller' = do
-  title <- (buyer, \_ -> do
-               putStrLn "Enter the title of the book to buy"
-               getLine
-           )
-           ~~> seller
+-- -- `bookseller'` is a simplified version of `bookseller` that utilizes `~~>`
+-- bookseller' :: Choreo IO (Maybe Day @ "buyer")
+-- bookseller' = do
+--   title <- (buyer, \_ -> do
+--                putStrLn "Enter the title of the book to buy"
+--                getLine
+--            )
+--            ~~> seller
 
-  price <- (seller, \un -> return $ priceOf (un title)) ~~> buyer
+--   price <- (seller, \un -> return $ priceOf (un title)) ~~> buyer
 
-  cond' (buyer, \un -> return $ (un price) < budget) \case
-    True  -> do
-      deliveryDate <- (seller, \un -> return $ deliveryDateOf (un title)) ~~> buyer
+--   cond' (buyer, \un -> return $ (un price) < budget) \case
+--     True  -> do
+--       deliveryDate <- (seller, \un -> return $ deliveryDateOf (un title)) ~~> buyer
 
-      buyer `locally` \un -> do
-        putStrLn $ "The book will be delivered on " ++ show (un deliveryDate)
-        return $ Just (un deliveryDate)
+--       buyer `locally` \un -> do
+--         putStrLn $ "The book will be delivered on " ++ show (un deliveryDate)
+--         return $ Just (un deliveryDate)
 
-    False -> do
-      buyer `locally` \_ -> do
-        putStrLn "The book's price is out of the budget"
-        return Nothing
+--     False -> do
+--       buyer `locally` \_ -> do
+--         putStrLn "The book's price is out of the budget"
+--         return Nothing
 
 budget :: Int
 budget = 100

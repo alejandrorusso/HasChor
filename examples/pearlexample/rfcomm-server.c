@@ -15,6 +15,7 @@ int main(int argc, char **argv)
     int s, client, bytes_read;
     socklen_t opt = sizeof(rem_addr);
     int random;
+    char randombuf[8];
 
     // I want to use the built in BT adapter
     const char* adapter = "60:F2:62:1B:9C:74";
@@ -67,10 +68,17 @@ int main(int argc, char **argv)
     if(bytes_read > 0) {
         printf("received [%s] : length %lu\n", buf, strlen(buf));
     }
+    // if the secret was correct
     if(random == (int)(((uint32_t *)buf)[0])) {
-        status = write(client, "ok!", 4);
+        for (int i = 0; i < 8; i++) {
+            random = rand();
+            random = random & 255;
+            randombuf[i] = (uint8_t) random;
+        }
+        status = write(client, randombuf, sizeof(randombuf));
+    // otherwise
     } else {
-        status = write(client, "not ok!", 8);
+        status = write(client, "0", 1);
     }
 
     // close connection

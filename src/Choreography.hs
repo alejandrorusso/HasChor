@@ -15,9 +15,9 @@ module Choreography (
   -- ** Choreo operations
   locally,
   (~>),
-  (~~>),
+--  (~~>),
   cond,
-  cond',
+--  cond',
 
   -- * Message transport backends
   -- ** The HTTP backend

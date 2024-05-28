@@ -65,8 +65,8 @@ void connect_(int socket) {
 
 }
 
-int authenticate_(int socket, uint32_t secret) {
-    int status; int bytes_read; char msg[12]; char resp[40];
+uint64_t authenticate_(int socket, uint32_t secret) {
+    int status; int bytes_read; char msg[12]; char resp[40]; uint8_t token[8];
     printf("given secret is %d\n", secret);
 
     memset(msg, 0, 12);
@@ -84,6 +84,27 @@ int authenticate_(int socket, uint32_t secret) {
         printf("received just %d bytes\n", bytes_read);
     }
 
+    printf("received %d bytes\n", bytes_read);
     printf("received [%s]\n", resp);
 
+    if(bytes_read == 8) {
+        for (int i = 0; i < 8; i++) {
+            token[i] = (uint8_t) resp[i];
+        }
+        return ((uint64_t *)resp)[0];
+    } else if (bytes_read == 1) {
+        return (uint64_t) 0;
+    } else {
+        printf("erroneous result code returned from server [%s]\n", resp);
+        exit(1);
+    }
+
+}
+
+void close_(int socket) {
+    int err;
+    err = close(socket);
+    if(err) {
+        printf("error closing socket: %d\n", err);
+    }
 }
