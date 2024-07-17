@@ -117,7 +117,7 @@ executable bookseller-3-loc-poly
         HasChor2,
         base,
         time
-    ghc-options: -ddump-splices -ddump-rule-firings -O3
+    ghc-options: -ddump-splices -ddump-rule-firings -O3 -fplugin=Choreography.Plugin
 
 executable diffiehellman
     hs-source-dirs:   examples/diffiehellman
@@ -139,7 +139,7 @@ executable karatsuba
       --  async,
         base,
         containers
-    ghc-options: -ddump-splices -ddump-rule-firings -O3
+    ghc-options: -ddump-splices -ddump-rule-firings -O3 -fplugin=Choreography.Plugin
 
 executable kvs1
     hs-source-dirs:   examples/kvs-1-simple
@@ -183,7 +183,7 @@ executable kvs4
         base,
         time,
         containers
-    ghc-options: -ddump-splices -ddump-rule-firings
+    ghc-options: -ddump-splices -ddump-rule-firings -fplugin=Choreography.Plugin
    -- -fllvm -keep-llvm-files
 
 executable mergesort
@@ -196,7 +196,7 @@ executable mergesort
         time,
         containers,
         template-haskell
-    ghc-options: -ddump-splices -ddump-rule-firings -O3
+    ghc-options: -ddump-splices -ddump-rule-firings -O3 -fplugin=Choreography.Plugin
 
 executable tricky
     hs-source-dirs:   examples/tricky
@@ -228,4 +228,4 @@ executable ring-leader
         HasChor2,
         base,
         transformers
-    ghc-options: -ddump-splices -ddump-rule-firings -O3
+    ghc-options: -ddump-splices -ddump-rule-firings -O3 -fplugin=Choreography.Plugin

@@ -3,7 +3,7 @@
 {-# LANGUAGE LambdaCase     #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Main where
+module Main (main) where
 
 import Choreography
 import Data.Proxy
@@ -11,11 +11,12 @@ import Data.Time
 import GHC.TypeLits
 import System.Environment
 
-$(compileFor 1 [ ("buyer", ("localhost", 4242))
+$(compileFor 0 [ ("buyer", ("localhost", 4242))
                , ("seller", ("localhost", 4343))
                ])
 
-{-# SPECIALISE forall . bookseller buyer #-}
+-- {-# SPECIALISE bookseller :: Proxy "buyer" -> Choreo IO (Maybe Day @ "buyer") #-}
+-- {-# SPECIALISE forall . bookseller buyer #-}
 -- | `bookseller` is a choreography that implements the bookseller protocol.
 -- This version takes the name of the buyer as a parameter (`someBuyer`).
 bookseller :: KnownSymbol a => Proxy a -> Choreo IO (Maybe Day @ a)

@@ -3,7 +3,7 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Main where
+module Main (main) where
 
 import Choreography
 import Choreography.Choreo
@@ -28,18 +28,25 @@ $(compileFor 0         [ ("primary", ("localhost", 3000))
                        , ("worker2", ("localhost", 5000))
                        ])
 
-{-# SPECIALISE forall . sort primary worker1 worker2 #-}
-{-# SPECIALISE forall . sort primary worker2 worker1 #-}
-{-# SPECIALISE forall . sort worker2 primary worker1 #-}
-{-# SPECIALISE forall . sort worker1 primary worker2 #-}
-{-# SPECIALISE forall . sort worker1 worker2 primary #-}
-{-# SPECIALISE forall . sort worker2 worker1 primary #-}
+-- {-# SPECIALISE forall . sort primary worker1 worker2 #-}
+-- {-# SPECIALISE forall . sort primary worker2 worker1 #-}
+-- {-# SPECIALISE forall . sort worker2 primary worker1 #-}
+-- {-# SPECIALISE forall . sort worker1 primary worker2 #-}
+-- {-# SPECIALISE forall . sort worker1 worker2 primary #-}
+-- {-# SPECIALISE forall . sort worker2 worker1 primary #-}
+
+{-# SPECIALISE sort :: Proxy "primary" -> Proxy "worker1" -> Proxy "worker2" -> ([Int] @ "primary") -> Choreo IO ([Int] @ "primary") #-}
+{-# SPECIALISE sort :: Proxy "primary" -> Proxy "worker2" -> Proxy "worker1" -> ([Int] @ "primary") -> Choreo IO ([Int] @ "primary") #-}
+{-# SPECIALISE sort :: Proxy "worker2" -> Proxy "primary" -> Proxy "worker1" -> ([Int] @ "worker2") -> Choreo IO ([Int] @ "worker2") #-}
+{-# SPECIALISE sort :: Proxy "worker1" -> Proxy "primary" -> Proxy "worker2" -> ([Int] @ "worker1") -> Choreo IO ([Int] @ "worker1") #-}
+{-# SPECIALISE sort :: Proxy "worker1" -> Proxy "worker2" -> Proxy "primary" -> ([Int] @ "worker1") -> Choreo IO ([Int] @ "worker1") #-}
+{-# SPECIALISE sort :: Proxy "worker2" -> Proxy "worker1" -> Proxy "primary" -> ([Int] @ "worker2") -> Choreo IO ([Int] @ "worker2") #-}
 sort ::
-  KnownSymbol a =>
+  (KnownSymbol a, KnownSymbol b, KnownSymbol c) =>
   Proxy a ->
-  KnownSymbol b =>
+--  KnownSymbol b =>
   Proxy b ->
-  KnownSymbol c =>
+--  KnownSymbol c =>
   Proxy c ->
   ([Int] @ a) ->
   Choreo IO ([Int] @ a)
@@ -59,12 +66,21 @@ sort a b c lst = do
     False -> do
       return lst
 
-{-# SPECIALISE forall . merge primary worker1 worker2 #-}
-{-# SPECIALISE forall . merge primary worker2 worker1 #-}
-{-# SPECIALISE forall . merge worker2 primary worker1 #-}
-{-# SPECIALISE forall . merge worker1 primary worker2 #-}
-{-# SPECIALISE forall . merge primary worker1 worker2 #-}
-{-# SPECIALISE forall . merge primary worker2 worker1 #-}
+-- {-# SPECIALISE forall . merge primary worker1 worker2 #-}
+-- {-# SPECIALISE forall . merge primary worker2 worker1 #-}
+-- {-# SPECIALISE forall . merge worker2 primary worker1 #-}
+-- {-# SPECIALISE forall . merge worker1 primary worker2 #-}
+-- {-# SPECIALISE forall . merge primary worker1 worker2 #-}
+-- {-# SPECIALISE forall . merge primary worker2 worker1 #-}
+
+
+{-# SPECIALISE merge :: Proxy "primary" -> Proxy "worker1" -> Proxy "worker2" -> [Int] @ "worker1" -> [Int] @ "worker2" -> Choreo IO ([Int] @ "primary") #-}
+{-# SPECIALISE merge :: Proxy "primary" -> Proxy "worker2" -> Proxy "worker1" -> [Int] @ "worker2" -> [Int] @ "worker1" -> Choreo IO ([Int] @ "primary") #-}
+{-# SPECIALISE merge :: Proxy "worker2" -> Proxy "primary" -> Proxy "worker1" -> [Int] @ "primary" -> [Int] @ "worker1" -> Choreo IO ([Int] @ "worker2") #-}
+{-# SPECIALISE merge :: Proxy "worker1" -> Proxy "primary" -> Proxy "worker2" -> [Int] @ "primary" -> [Int] @ "worker2" -> Choreo IO ([Int] @ "worker1") #-}
+
+-- {-# SPECIALISE forall . merge primary worker1 worker2 #-}
+-- {-# SPECIALISE forall . merge primary worker2 worker1 #-}
 merge ::
   (KnownSymbol a, KnownSymbol b, KnownSymbol c) =>
   Proxy a ->

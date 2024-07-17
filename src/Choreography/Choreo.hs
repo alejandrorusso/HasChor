@@ -2,7 +2,7 @@
 {-# LANGUAGE ImpredicativeTypes #-}
 
 -- | This module defines `Choreo`, the monad for writing choreographies.
-module Choreography.Choreo (locally, (~>), cond, Choreo) where
+module Choreography.Choreo where
 
 import Choreography.Location
 import Choreography.Network

@@ -5,7 +5,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeApplications #-}
 
-module Main where
+module Main (main) where
 
 import Choreography
 import Choreography.Choreo
@@ -23,7 +23,7 @@ import GHC.TypeLits (KnownSymbol)
 import System.Environment
 import System.IO.Unsafe
 
-$(compileFor 1 [ ("client",  ("localhost", 3000))
+$(compileFor 2 [ ("client",  ("localhost", 3000))
                , ("primary", ("localhost", 4000))
                , ("backup1", ("localhost", 5000))
               -- , ("backup2", ("localhost", 6000))
@@ -66,22 +66,22 @@ handleRequest request stateRef = case request of
 -- `a` is a type that represent states across locations
 type ReplicationStrategy a = Request @ "primary" -> a -> Choreo IO (Response @ "primary")
 
--- -- | `nullReplicationStrategy` is a replication strategy that does not replicate the state.
--- nullReplicationStrategy :: ReplicationStrategy (IORef State @ "primary")
--- nullReplicationStrategy request stateRef = do
---   primary `locally` \unwrap -> case unwrap request of
---     Put key value -> do
---       modifyIORef (unwrap stateRef) (Map.insert key value)
---       return (Just value)
---     Get key -> do
---       state <- readIORef (unwrap stateRef)
---       return (Map.lookup key state)
+-- | `nullReplicationStrategy` is a replication strategy that does not replicate the state.
+nullReplicationStrategy :: ReplicationStrategy (IORef State @ "primary")
+nullReplicationStrategy request stateRef = do
+  primary `locally` \unwrap -> case unwrap request of
+    Put key value -> do
+      modifyIORef (unwrap stateRef) (Map.insert key value)
+      return (Just value)
+    Get key -> do
+      state <- readIORef (unwrap stateRef)
+      return (Map.lookup key state)
 
 --{-# SPECIALISE forall . doBackup client primary  #-}
 --{-# SPECIALISE forall . doBackup client backup1  #-}
 -- {-# SPECIALISE forall . doBackup client backup2  #-}
 --{-# SPECIALISE forall . doBackup primary client  #-}
-{-# SPECIALISE forall . doBackup primary backup1 #-}
+--{-# SPECIALISE forall . doBackup primary backup1 #-}
 -- {-# SPECIALISE forall . doBackup primary backup2 #-}
 --{-# SPECIALISE forall . doBackup backup1 client  #-}
 --{-# SPECIALISE forall . doBackup backup1 primary #-}
@@ -90,6 +90,7 @@ type ReplicationStrategy a = Request @ "primary" -> a -> Choreo IO (Response @ "
 -- {-# SPECIALISE forall . doBackup backup2 primary #-}
 -- {-# SPECIALISE forall . doBackup backup2 backup1 #-}
 -- | `doBackup` relays a mutating request to a backup location.
+{-# SPECIALISE doBackup :: Proxy "primary" -> Proxy "backup1" -> Request @ "primary" -> IORef State @ "backup1" -> Choreo IO () #-}
 doBackup ::
   KnownSymbol a =>
   KnownSymbol b =>
@@ -97,23 +98,15 @@ doBackup ::
   Proxy b ->
   Request @ a ->
   IORef State @ b ->
-  Choreo IO () -- (() @ "primary")
--- doBackup ::
---   Proxy "primary" ->
---   Proxy "backup1" ->
---   Request @ "primary" ->
---   IORef State @ "backup1" ->
---   Choreo IO ()
+  Choreo IO ()
 doBackup locA locB request stateRef = do
   cond (locA, request) \case
     Put _ _ -> do
       request' <- (locA, request) ~> locB
-      res <- locB `locally` \unwrap -> handleRequest (unwrap request') (unwrap stateRef)
-      (locB, res) ~> locA
-      primary `locally` \_ -> putStrLn "inside PUT"
+      (locB, \unwrap -> handleRequest (unwrap request') (unwrap stateRef))
+        ~~> locA
       return ()
     _ -> do
-      primary `locally` \_ -> putStrLn "inside GET"
       return ()
 
 -- | `primaryBackupReplicationStrategy` is a replication strategy that replicates the state to a backup server.

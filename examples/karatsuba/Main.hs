@@ -3,7 +3,7 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Main where
+module Main (main) where
 
 import Choreography
 import Choreography.Choreo
@@ -31,12 +31,19 @@ data KaratsubaNums = KaratsubaNums
     l2 :: Integer
   }
 
-{-# SPECIALISE forall . karatsuba primary worker1 worker2 #-}
-{-# SPECIALISE forall . karatsuba primary worker2 worker1 #-}
-{-# SPECIALISE forall . karatsuba worker1 primary worker2 #-}
-{-# SPECIALISE forall . karatsuba worker2 primary worker1 #-}
-{-# SPECIALISE forall . karatsuba worker1 worker2 primary #-}
-{-# SPECIALISE forall . karatsuba worker2 worker1 primary #-}
+-- {-# SPECIALISE forall . karatsuba primary worker1 worker2 #-}
+-- {-# SPECIALISE forall . karatsuba primary worker2 worker1 #-}
+-- {-# SPECIALISE forall . karatsuba worker1 primary worker2 #-}
+-- {-# SPECIALISE forall . karatsuba worker2 primary worker1 #-}
+-- {-# SPECIALISE forall . karatsuba worker1 worker2 primary #-}
+-- {-# SPECIALISE forall . karatsuba worker2 worker1 primary #-}
+
+{-# SPECIALISE karatsuba :: Proxy "primary" -> Proxy "worker1" -> Proxy "worker2" -> (Integer @ "primary") -> (Integer @ "primary") -> Choreo IO (Integer @ "primary") #-}
+{-# SPECIALISE karatsuba :: Proxy "primary" -> Proxy "worker2" -> Proxy "worker1" -> (Integer @ "primary") -> (Integer @ "primary") -> Choreo IO (Integer @ "primary") #-}
+{-# SPECIALISE karatsuba :: Proxy "worker1" -> Proxy "primary" -> Proxy "worker2" -> (Integer @ "worker1") -> (Integer @ "worker1") -> Choreo IO (Integer @ "worker1") #-}
+{-# SPECIALISE karatsuba :: Proxy "worker2" -> Proxy "primary" -> Proxy "worker1" -> (Integer @ "worker2") -> (Integer @ "worker2") -> Choreo IO (Integer @ "worker2") #-}
+{-# SPECIALISE karatsuba :: Proxy "worker1" -> Proxy "worker2" -> Proxy "primary" -> (Integer @ "worker1") -> (Integer @ "worker1") -> Choreo IO (Integer @ "worker1") #-}
+{-# SPECIALISE karatsuba :: Proxy "worker2" -> Proxy "worker1" -> Proxy "primary" -> (Integer @ "worker2") -> (Integer @ "worker2") -> Choreo IO (Integer @ "worker2") #-}
 karatsuba ::
   (KnownSymbol a, KnownSymbol b, KnownSymbol c) =>
   Proxy a ->

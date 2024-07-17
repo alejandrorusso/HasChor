@@ -13,6 +13,12 @@ import Control.Monad.Trans.Class
 import Control.Monad.Trans.State
 import System.Environment
 
+$(compileFor 0 [ ("nodeA", ("localhost", 4243))
+               , ("nodeB", ("localhost", 4324))
+               , ("nodeC", ("localhost", 4234))
+               , ("nodeD", ("localhost", 4432))
+               ])
+
 -- * ROBERT: doesn't work, Edge hides information that we can not recover in order to rewrite
 
 -- an edge of the ring is represented as a tuple of two locaitons l and l' where
@@ -25,6 +31,7 @@ type Ring = [Edge]
 
 type Label = Int
 
+{-# SPECIALISE ringLeader ringL #-}
 ringLeader :: Ring -> Choreo (StateT Label IO) ()
 ringLeader ring = loop ring
   where
@@ -52,24 +59,18 @@ ringLeader ring = loop ring
           right `locally` \un -> put (max (un labelLeft) (un labelRight))
           return False
 
-$(compileFor 0 [ ("nodeA", ("localhost", 4243))
-               , ("nodeB", ("localhost", 4324))
-               , ("nodeC", ("localhost", 4234))
-               , ("nodeD", ("localhost", 4432))
-               ])
-
-ring = [ Edge nodeA nodeB
-       , Edge nodeB nodeC
-       , Edge nodeC nodeD
-       , Edge nodeD nodeA
-       ]
+ringL = [ Edge nodeA nodeB
+        , Edge nodeB nodeC
+        , Edge nodeC nodeD
+        , Edge nodeD nodeA
+        ]
 
 main :: IO ()
 main = do
   [loc] <- getArgs
   putStrLn "Please input a label:"
   label <- read <$> getLine
-  runStateT (runChoreography config (ringLeader ring) loc) label
+  runStateT (runChoreography config (ringLeader ringL) loc) label
   return ()
   where
     config = mkHttpConfig [ ("A", ("localhost", 4242))

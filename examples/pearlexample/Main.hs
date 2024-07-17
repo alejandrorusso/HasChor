@@ -24,9 +24,7 @@ getAccessToken p = do
     authSocket <- authenticator `locally` \_ -> do
         socket <- allocateSocket
         {- upon connection, the remote server is going to present the
-        user with a secret. This can be either via e.g. SMS or Email. In
-        this case, a BT connection is made to a server that will print
-        a randomly generated secret to a terminal. -}
+        user with a secret. -}
         connect socket
         return socket
 
